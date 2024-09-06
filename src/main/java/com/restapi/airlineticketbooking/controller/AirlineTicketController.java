@@ -21,9 +21,13 @@ public class AirlineTicketController {
     public AirlineTicketService airlineTicketService;
 
     @PostMapping("/book")
-    public ResponseEntity<AirlineTicket> bookTicket(@RequestBody AirlineTicket ticket) {
-        AirlineTicket bookedTicket = airlineTicketService.bookTicket(ticket);
-        return new ResponseEntity<>(bookedTicket, HttpStatus.CREATED);
+    public ResponseEntity<?> bookTicket(@RequestBody AirlineTicket ticket) throws Exception {
+        try {
+            AirlineTicket bookedTicket = airlineTicketService.bookTicket(ticket);
+            return new ResponseEntity<>(bookedTicket, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}")

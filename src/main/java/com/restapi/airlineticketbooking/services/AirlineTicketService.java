@@ -15,9 +15,14 @@ public class AirlineTicketService {
     @Autowired
     private AirlineTicketRepository airlineTicketRepository;
 
-    public AirlineTicket bookTicket(AirlineTicket ticket) {
-        ticket.setBookingTime(LocalDateTime.now());
-        return airlineTicketRepository.save(ticket);
+    public AirlineTicket bookTicket(AirlineTicket ticket) throws Exception {
+        LocalDateTime departureTime = ticket.getDepartureTime();
+        if (departureTime.isAfter(LocalDateTime.now())) {
+            ticket.setBookingTime(LocalDateTime.now());
+            return airlineTicketRepository.save(ticket);
+        } else {
+            throw new IllegalArgumentException("Departure time cannot be earlier than the current time.");
+        }
     }
 
     public AirlineTicket getTicket(Long id) {
