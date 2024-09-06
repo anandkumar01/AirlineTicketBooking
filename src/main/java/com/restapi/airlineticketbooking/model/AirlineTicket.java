@@ -16,11 +16,29 @@ public class AirlineTicket {
     private String passengerName;
     private String departure;
     private String destination;
+    private String flightName;
+    private String flightNumber;
     private LocalDateTime departureTime;
     private LocalDateTime bookingTime;
     private double price;
     private String seatNumber;
     private boolean cancelled = false;
+
+    public String getFlightName() {
+        return flightName;
+    }
+
+    public void setFlightName(String flightName) {
+        this.flightName = flightName;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public void setFlightNumber(String flightNumber) {
+        this.flightNumber = flightNumber;
+    }
 
     public boolean isCancelled() {
         return cancelled;
