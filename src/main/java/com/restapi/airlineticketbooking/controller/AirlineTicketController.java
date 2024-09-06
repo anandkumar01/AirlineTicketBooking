@@ -16,7 +16,7 @@ import com.restapi.airlineticketbooking.services.AirlineTicketService;
 @RestController
 @RequestMapping("api/tickets")
 public class AirlineTicketController {
-    
+
     @Autowired
     public AirlineTicketService airlineTicketService;
 
@@ -29,10 +29,20 @@ public class AirlineTicketController {
     @GetMapping("/{id}")
     public ResponseEntity<AirlineTicket> getTicket(@PathVariable Long id) {
         AirlineTicket ticket = airlineTicketService.getTicket(id);
-        if(ticket != null) {
+        if (ticket != null) {
             return new ResponseEntity<>(ticket, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<String> cancelTicket(@PathVariable Long id) {
+        AirlineTicket cancelledTicket = airlineTicketService.cancelTicket(id);
+        if (cancelledTicket != null) {
+            return new ResponseEntity<>("Ticket cancelled succesfully.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Ticket not found", HttpStatus.NOT_FOUND);
         }
     }
 
