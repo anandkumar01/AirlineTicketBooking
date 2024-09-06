@@ -28,6 +28,12 @@ public class AirlineTicketService {
         Optional<AirlineTicket> optionalTicket = airlineTicketRepository.findById(id);
         if (optionalTicket.isPresent()) {
             AirlineTicket ticket = optionalTicket.get();
+            if (ticket.isCancelled()) {
+                throw new IllegalStateException("Ticket is already cancelled.");
+            }
+            if (ticket.getDepartureTime().isBefore(LocalDateTime.now())) {
+                throw new IllegalStateException("Can not cancel a ticket after departure.");
+            }
             ticket.setCancelled(true);
             return airlineTicketRepository.save(ticket);
         } else {

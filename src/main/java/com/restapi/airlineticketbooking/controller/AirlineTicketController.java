@@ -38,11 +38,15 @@ public class AirlineTicketController {
 
     @PostMapping("/{id}/cancel")
     public ResponseEntity<String> cancelTicket(@PathVariable Long id) {
-        AirlineTicket cancelledTicket = airlineTicketService.cancelTicket(id);
-        if (cancelledTicket != null) {
-            return new ResponseEntity<>("Ticket cancelled succesfully.", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Ticket not found", HttpStatus.NOT_FOUND);
+        try {
+            AirlineTicket cancelledTicket = airlineTicketService.cancelTicket(id);
+            if (cancelledTicket != null) {
+                return new ResponseEntity<>("Ticket cancelled succesfully.", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Ticket not found", HttpStatus.NOT_FOUND);
+            }
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
