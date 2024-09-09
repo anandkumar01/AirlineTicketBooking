@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.restapi.airlineticketbooking.model.AirlineTicket;
 import com.restapi.airlineticketbooking.model.Flight;
+import com.restapi.airlineticketbooking.model.Passenger;
 import com.restapi.airlineticketbooking.repository.AirlineTicketRepository;
 import com.restapi.airlineticketbooking.repository.FlightRepository;
+import com.restapi.airlineticketbooking.repository.PassengerRepository;
 
 @Service
 public class AirlineTicketService {
@@ -20,6 +22,9 @@ public class AirlineTicketService {
     @Autowired
     private FlightRepository flightRepository;
 
+    @Autowired
+    private PassengerRepository passengerRepository;
+
     public AirlineTicket bookTicket(AirlineTicket ticket) throws Exception {
         // Validate departure time
         LocalDateTime departureTime = ticket.getDepartureTime();
@@ -27,11 +32,39 @@ public class AirlineTicketService {
             throw new IllegalArgumentException("Departure time cannot be earlier than the current time.");
         }
 
-        // Check if the flight exists with the same flight name and flight number
         Optional<Flight> flight = flightRepository.findByFlightNameAndFlightNumber(
                 ticket.getFlightName(), ticket.getFlightNumber());
 
         if (flight.isPresent()) {
+            Passenger passenger = ticket.getPassenger();
+            if (passenger != null) {
+                Optional<Passenger> existingPassenger = passengerRepository.findByNameAndEmailAndPhone(
+                        passenger.getName(),
+                        passenger.getEmail(),
+                        passenger.getPhone());
+
+                if (existingPassenger.isPresent()) {
+                    ticket.setPassenger(existingPassenger.get());
+                } else {
+                    passengerRepository.save(passenger);
+                    ticket.setPassenger(passenger);
+                }
+            }
+
+            // Check for duplicate ticket
+            Optional<AirlineTicket> existingTicket = airlineTicketRepository
+                    .findByFlightNameAndFlightNumberAndPassengerAndDepartureTime(
+                            ticket.getFlightName(),
+                            ticket.getFlightNumber(),
+                            ticket.getPassenger(),
+                            ticket.getDepartureTime());
+
+            if (existingTicket.isPresent()) {
+                throw new IllegalArgumentException(
+                        "Ticket has already been booked for this passenger on this flight.");
+            }
+
+            // Set booking time and save the ticket
             ticket.setBookingTime(LocalDateTime.now());
             return airlineTicketRepository.save(ticket);
         } else {

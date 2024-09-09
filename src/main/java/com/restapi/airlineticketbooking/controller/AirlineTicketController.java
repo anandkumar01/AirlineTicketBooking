@@ -3,6 +3,7 @@ package com.restapi.airlineticketbooking.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.restapi.airlineticketbooking.model.AirlineTicket;
+import com.restapi.airlineticketbooking.repository.AirlineTicketRepository;
 import com.restapi.airlineticketbooking.services.AirlineTicketService;
 
 @RestController
@@ -19,6 +21,9 @@ public class AirlineTicketController {
 
     @Autowired
     public AirlineTicketService airlineTicketService;
+
+    @Autowired
+    private AirlineTicketRepository airlineTicketRepository;
 
     @PostMapping("/book")
     public ResponseEntity<?> bookTicket(@RequestBody AirlineTicket ticket) throws Exception {
@@ -56,4 +61,13 @@ public class AirlineTicketController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTicket(@PathVariable Long id) {
+        if (airlineTicketRepository.existsById(id)) {
+            airlineTicketRepository.deleteById(id);
+            return new ResponseEntity<>("Ticket deleted successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Ticket not found", HttpStatus.NOT_FOUND);
+        }
+    }
 }
