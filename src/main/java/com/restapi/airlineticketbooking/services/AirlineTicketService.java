@@ -53,11 +53,11 @@ public class AirlineTicketService {
 
             // Check for duplicate ticket
             Optional<AirlineTicket> existingTicket = airlineTicketRepository
-                    .findByFlightNameAndFlightNumberAndPassengerAndDepartureTime(
+                    .findByFlightNameAndFlightNumberAndPassengerAndSeatNumber(
                             ticket.getFlightName(),
                             ticket.getFlightNumber(),
                             ticket.getPassenger(),
-                            ticket.getDepartureTime());
+                            ticket.getSeatNumber());
 
             if (existingTicket.isPresent()) {
                 throw new IllegalArgumentException(

@@ -38,12 +38,12 @@ public class AirlineTicketController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AirlineTicket> getTicket(@PathVariable Long id) {
+    public ResponseEntity<?> getTicket(@PathVariable Long id) {
         AirlineTicket ticket = airlineTicketService.getTicket(id);
         if (ticket != null) {
             return new ResponseEntity<>(ticket, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Ticket not found",HttpStatus.NOT_FOUND);
         }
     }
 
